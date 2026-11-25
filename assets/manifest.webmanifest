@@ -1,0 +1,15 @@
+{
+  "name": "燃迹 EMBER · 健身饮食看板",
+  "short_name": "燃迹",
+  "description": "轻量个人健身与饮食管理：每日打卡、拍照估算热量、运动记录、趋势与每周报告。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0F0C",
+  "theme_color": "#0A0F0C",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

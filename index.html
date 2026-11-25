@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A0F0C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="燃迹 Ember">
+<meta name="description" content="燃迹 EMBER · 轻量个人健身与饮食管理看板：每日打卡、拍照估算热量、运动记录、趋势与每周报告。">
+<title>燃迹 EMBER · 健身饮食看板</title>
+<link rel="manifest" href="assets/manifest.webmanifest">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 氛围层 -->
+<div class="atmo" aria-hidden="true">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="grain"></div>
+</div>
+
+<div class="frame">
+
+  <!-- 顶栏 -->
+  <header class="topbar" id="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(234,242,230,.14)" stroke-width="4"/>
+        <circle class="brand-arc" cx="20" cy="20" r="15" fill="none" stroke="#C9F24D" stroke-width="4" stroke-linecap="round" stroke-dasharray="70.7 94.3" transform="rotate(-90 20 20)"/>
+        <circle cx="20" cy="20" r="5.5" fill="#FF7E5A"/>
+      </svg>
+      <div class="brand-name">燃迹 <span>EMBER</span></div>
+    </div>
+    <div class="top-right">
+      <button class="streak-pill" id="streakPill" title="连续记录天数">
+        <svg viewBox="0 0 24 24" class="ic"><path fill="currentColor" d="M12.6 2.3c.3 2.9-.7 4.5-2.1 6C9 9.9 7.5 11.6 7.5 14.4a6.6 6.6 0 0 0 6.6 6.6c3.6 0 6.4-2.8 6.4-6.5 0-5.4-4-7.6-4.9-11.9-1.6.5-2.9 1.6-3.6 3.2-.4-1.1-.4-2.3.6-3.5Zm1.3 10.2c1.9 1.6 2.7 3 2.7 4.5 0 1.8-1.2 3-2.7 3-1.6 0-2.8-1.2-2.8-2.9 0-1.7 1.1-2.9 2.8-4.6Z"/></svg>
+        <b id="streakNum">0</b><span>天</span>
+      </button>
+      <button class="icon-btn" id="btnSettings" title="设置">
+        <svg viewBox="0 0 24 24" class="ic" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M4.2 6.5l2 1.5M17.8 16l2 1.5M2.8 12h2.6M18.6 12h2.6M4.2 17.5l2-1.5M17.8 8l2-1.5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主视图 -->
+  <main id="main">
+
+    <section class="view" id="view-today">
+      <div class="date-head">
+        <div class="date-label" id="dateLabel">—</div>
+        <h1 class="greet" id="greetText">晚上好</h1>
+      </div>
+      <div id="seedBanner"></div>
+      <div class="stack" id="todayStack"></div>
+    </section>
+
+    <section class="view" id="view-trends">
+      <div class="date-head">
+        <div class="date-label">TRENDS</div>
+        <h1 class="greet">趋势</h1>
+        <div class="chip-row" id="rangeChips"></div>
+      </div>
+      <div class="stack" id="trendsStack"></div>
+    </section>
+
+    <section class="view" id="view-report">
+      <div class="date-head">
+        <div class="date-label">WEEKLY REPORT</div>
+        <h1 class="greet">每周报告</h1>
+        <div class="chip-row" id="weekChips"></div>
+      </div>
+      <div class="stack" id="reportStack"></div>
+    </section>
+
+    <section class="view" id="view-me">
+      <div class="date-head">
+        <div class="date-label">SETTINGS</div>
+        <h1 class="greet">我的</h1>
+      </div>
+      <div class="stack" id="meStack"></div>
+    </section>
+
+  </main>
+
+  <!-- 底部导航 + FAB -->
+  <nav class="tabbar" id="tabbar">
+    <button class="tab is-on" data-tab="today">
+      <svg viewBox="0 0 24 24" class="ic" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12.7 3.2c.2 2.4-.8 3.9-2.1 5.3C9.2 10 7.6 11.6 7.6 14.2a5.6 5.6 0 0 0 5.6 5.6c3 0 5.4-2.3 5.4-5.4 0-4.5-3.3-6.3-4.1-9.9-1.3.4-2.4 1.4-3 2.7-.3-1-.3-2 .5-3.2"/><circle cx="13.4" cy="15.4" r="2.1"/></svg>
+      <span>今天</span>
+    </button>
+    <button class="tab" data-tab="trends">
+      <svg viewBox="0 0 24 24" class="ic" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15.5 8.2 10l3.4 3.2L21 4"/><path d="M15.6 4H21v5.4"/></svg>
+      <span>趋势</span>
+    </button>
+    <div class="fab-slot">
+      <button class="fab" id="fab" aria-label="添加记录">
+        <svg viewBox="0 0 24 24" class="ic" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+    <button class="tab" data-tab="report">
+      <svg viewBox="0 0 24 24" class="ic" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h9.5L20 8v12.5H6z"/><path d="M15 3.5V8h5"/><path d="M9.5 13h5M9.5 16.5h5"/></svg>
+      <span>报告</span>
+    </button>
+    <button class="tab" data-tab="me">
+      <svg viewBox="0 0 24 24" class="ic" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.8 20.2c1.3-3.4 4-5.1 7.2-5.1s5.9 1.7 7.2 5.1"/></svg>
+      <span>我的</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- 动态层 -->
+<div id="layerToast"></div>
+<div id="layerSheet"></div>
+<div id="layerModal"></div>
+<input type="file" id="fileFood" accept="image/*" hidden>
+<input type="file" id="fileWorkout" accept="image/*" hidden>
+<input type="file" id="fileImport" accept="application/json,.json" hidden>
+
+<script src="js/store.js"></script>
+<script src="js/estimate.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
