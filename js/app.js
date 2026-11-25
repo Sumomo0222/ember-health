@@ -1112,8 +1112,11 @@ function renderMe() {
       <span class="tail"><input type="time" class="f-input" id="remTime" value="${r.time}" style="width:104px;padding:8px 10px"></span>
       <span class="tail"><span class="switch ${r.enabled ? 'on' : ''}" id="remSwitch"></span></span>
     </div>
-    <div class="data-note" style="margin-top:10px">网页提醒需要本页面保持打开（可加入主屏幕后台挂起）。授权通知后，到点会推送系统通知；未授权时则以站内横幅提醒。</div>
-    <button class="btn btn-ghost btn-sm" style="margin-top:10px" id="remTest">发送测试提醒</button>`;
+    <div class="data-note" style="margin-top:10px">网页提醒需要本页面保持打开（可加入主屏幕后台挂起）。授权通知后，到点会推送系统通知；未授权时则以站内横幅提醒。想让<b>页面没打开时也响</b>？点下方「同步到系统日历」，交给手机系统日历推送。</div>
+    <div style="display:flex;gap:9px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" id="remTest">发送测试提醒</button>
+      <button class="btn btn-ghost btn-sm" id="remIcs">📅 同步到系统日历</button>
+    </div>`;
   stack.appendChild(g);
   g.querySelector('#rowGoals').addEventListener('click', openGoalsSheet);
   g.querySelector('#rowCheckins').addEventListener('click', openCheckinManage);
@@ -1133,6 +1136,7 @@ function renderMe() {
     toast(`提醒时间改为 ${r.time}`, '⏰');
   });
   g.querySelector('#remTest').addEventListener('click', () => fireReminder(true));
+  g.querySelector('#remIcs').addEventListener('click', exportIcs);
 
   const d = document.createElement('div');
   d.className = 'card me-group';
@@ -1266,6 +1270,47 @@ function fireReminder(test = false) {
     } catch (e) { /* 忽略 */ }
   }
   toast('⏰ 打卡时间到！今天记录了吗', '🔔');
+}
+/* ---- 同步提醒到系统日历（.ics，页面未打开也能收到系统推送） ---- */
+function exportIcs() {
+  const [hh, mm] = (state.reminder.time || '21:30').split(':').map(Number);
+  const start = new Date();
+  start.setHours(hh, mm, 0, 0);
+  if (start <= new Date()) start.setDate(start.getDate() + 1);
+  const end = new Date(start.getTime() + 15 * 60000);
+  const fmt = d => d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate())
+    + 'T' + pad2(d.getHours()) + pad2(d.getMinutes()) + '00';
+  // 浮动本地时间（不带 Z），导入后跟随手机时区；逗号需按 RFC 5545 转义
+  const desc = '打开燃迹 EMBER 完成今日打卡\\, 记录饮食与运动 https://sumomo0222.github.io/ember-health/';
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Ember Health//Checkin Reminder//CN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'UID:ember-checkin-daily@ember-health',
+    'DTSTAMP:' + fmt(new Date()),
+    'DTSTART:' + fmt(start),
+    'DTEND:' + fmt(end),
+    'RRULE:FREQ=DAILY',
+    'SUMMARY:燃迹打卡 ⏰',
+    'DESCRIPTION:' + desc,
+    'BEGIN:VALARM',
+    'TRIGGER:-PT0M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:燃迹打卡提醒',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+  const blob = new Blob([lines], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ember-checkin-reminder.ics';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('日历文件已下载，打开它选择"添加到日历"', '📅');
 }
 function reminderTick() {
   if (!state.reminder.enabled) return;
